@@ -44,6 +44,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundImage: Swoosh,
     backgroundSize: 'cover',
     width: '296px',
+    color: 'white',
+    fontSize: '30px',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
       height: '100px',
@@ -106,17 +108,10 @@ const IntroContainer = (props: IntroContainerProps) => {
 
   return (
     <div className={classes.background}>
-      <TwilioLogo className={classes.twilioLogo} />
-      {user && location.pathname !== '/login' && <UserMenu />}
       <div className={classes.container}>
         <div className={classes.innerContainer}>
           <div className={classes.swooshContainer}>
-            <div className={classes.logoContainer}>
-              <VideoLogo />
-              <Typography variant="h6" className={classes.title}>
-                Twilio Programmable Video
-              </Typography>
-            </div>
+            Junto
           </div>
           <div className={classes.content}>{props.children}</div>
         </div>

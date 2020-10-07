@@ -5,9 +5,10 @@ import MediaErrorSnackbar from './MediaErrorSnackbar/MediaErrorSnackbar';
 import PreflightTest from './PreflightTest/PreflightTest';
 import RoomNameScreen from './RoomNameScreen/RoomNameScreen';
 import { useAppState } from '../../state';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import Video from 'twilio-video';
+import Video, { TwilioError } from 'twilio-video';
+import { TimeToLeave } from '@material-ui/icons';
 
 export enum Steps {
   roomNameStep,
@@ -15,24 +16,33 @@ export enum Steps {
 }
 
 export default function PreJoinScreens() {
-  const { user } = useAppState();
+  const { setError, setTitle } = useAppState();
   const { getAudioAndVideoTracks } = useVideoContext();
-  const { URLRoomName } = useParams();
-  const [step, setStep] = useState(Steps.roomNameStep);
+  const [step] = useState(Steps.deviceSelectionStep);
+  const location = useLocation();
 
-  const [name, setName] = useState<string>(user?.displayName || '');
-  const [roomName, setRoomName] = useState<string>('');
+  const queryParams = new URLSearchParams(location.search);
+  const name = queryParams.get('name')!;
+  const title = queryParams.get('title')!;
+  const token = queryParams.get('token')!;
 
   const [mediaError, setMediaError] = useState<Error>();
 
   useEffect(() => {
-    if (URLRoomName) {
-      setRoomName(URLRoomName);
-      if (user?.displayName) {
-        setStep(Steps.deviceSelectionStep);
-      }
+    if (!name) {
+      setError(new Error('Must provide user\'s name in url params. Please try again.') as TwilioError);
+      return;
     }
-  }, [user, URLRoomName]);
+    if (!title) {
+      setError(new Error('Must provide title in url params. Please try again.') as TwilioError);
+      return;
+    }
+    setTitle(title);
+    if (!token) {
+      setError(new Error('Must provide token in url params. Please try again.') as TwilioError);
+      return;
+    }
+  }, []);
 
   useEffect(() => {
     if (step === Steps.deviceSelectionStep) {
@@ -44,15 +54,6 @@ export default function PreJoinScreens() {
     }
   }, [getAudioAndVideoTracks, step]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // If this app is deployed as a twilio function, don't change the URL because routing isn't supported.
-    if (!window.location.origin.includes('twil.io')) {
-      window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}${window.location.search || ''}`));
-    }
-    setStep(Steps.deviceSelectionStep);
-  };
-
   const SubContent = (
     <>
       {Video.testPreflight && <PreflightTest />}
@@ -62,19 +63,7 @@ export default function PreJoinScreens() {
 
   return (
     <IntroContainer subContent={step === Steps.deviceSelectionStep && SubContent}>
-      {step === Steps.roomNameStep && (
-        <RoomNameScreen
-          name={name}
-          roomName={roomName}
-          setName={setName}
-          setRoomName={setRoomName}
-          handleSubmit={handleSubmit}
-        />
-      )}
-
-      {step === Steps.deviceSelectionStep && (
-        <DeviceSelectionScreen name={name} roomName={roomName} setStep={setStep} />
-      )}
+      <DeviceSelectionScreen name={name} title={title} token={token} />
     </IntroContainer>
   );
 }

@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   joinButtons: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column-reverse',
       width: '100%',
@@ -52,24 +52,24 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface DeviceSelectionScreenProps {
   name: string;
-  roomName: string;
-  setStep: (step: Steps) => void;
+  title: string;
+  token: string;
 }
 
-export default function DeviceSelectionScreen({ name, roomName, setStep }: DeviceSelectionScreenProps) {
+export default function DeviceSelectionScreen({ name, title, token }: DeviceSelectionScreenProps) {
   const classes = useStyles();
-  const { getToken, isFetching } = useAppState();
+  const { isFetching } = useAppState();
   const { connect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
 
   const handleJoin = () => {
-    getToken(name, roomName).then(token => connect(token));
+    connect(token);
   };
 
   return (
     <>
       <Typography variant="h5" className={classes.gutterBottom}>
-        Join {roomName}
+        {title}
       </Typography>
 
       <Grid container justify="center">
@@ -94,9 +94,6 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
               </Hidden>
             </div>
             <div className={classes.joinButtons}>
-              <Button variant="outlined" color="primary" onClick={() => setStep(Steps.roomNameStep)}>
-                Cancel
-              </Button>
               <Button
                 variant="contained"
                 color="primary"

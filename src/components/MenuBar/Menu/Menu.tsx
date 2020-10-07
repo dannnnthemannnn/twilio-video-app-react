@@ -42,9 +42,6 @@ export default function Menu(props: { buttonClassName?: string }) {
           horizontal: 'center',
         }}
       >
-        <MenuItem onClick={() => setAboutOpen(true)}>
-          <Typography variant="body1">About</Typography>
-        </MenuItem>
         <MenuItem onClick={() => setSettingsOpen(true)}>
           <Typography variant="body1">Audio and Video Settings</Typography>
         </MenuItem>

@@ -9,6 +9,8 @@ import { User } from 'firebase';
 export interface StateContextType {
   error: TwilioError | null;
   setError(error: TwilioError | null): void;
+  title: string | null;
+  setTitle(title: string | null): void;
   getToken(name: string, room: string, passcode?: string): Promise<string>;
   user?: User | null | { displayName: undefined; photoURL: undefined; passcode?: string };
   signIn?(passcode?: string): Promise<void>;
@@ -35,6 +37,7 @@ export const StateContext = createContext<StateContextType>(null!);
 */
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [error, setError] = useState<TwilioError | null>(null);
+  const [title, setTitle] = useState<String | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [activeSinkId, setActiveSinkId] = useState('default');
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
@@ -42,6 +45,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   let contextValue = {
     error,
     setError,
+    title, 
+    setTitle,
     isFetching,
     activeSinkId,
     setActiveSinkId,
