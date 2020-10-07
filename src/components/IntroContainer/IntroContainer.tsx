@@ -48,6 +48,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '30px',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
+      display: 'none',
       height: '100px',
       backgroundPositionY: '140px',
     },
