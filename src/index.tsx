@@ -15,10 +15,14 @@ import './types';
 import { VideoProvider } from './components/VideoProvider';
 import useConnectionOptions from './utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from './components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
+import { mobileModel } from 'react-device-detect';
 
 const VideoApp = () => {
   const { error, setError } = useAppState();
   const connectionOptions = useConnectionOptions();
+  if (mobileModel.includes('Pixel')) {
+    connectionOptions.preferredVideoCodecs = ['H264'];
+  }
 
   return (
     <UnsupportedBrowserWarning>
