@@ -13,6 +13,7 @@ import ToggleAudioButton from '../Buttons/ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from '../Buttons/ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from '../Buttons/ToogleScreenShareButton/ToggleScreenShareButton';
 import { useAppState } from '../../state';
+import { isMobile } from 'react-device-detect';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -90,7 +91,7 @@ export default function MenuBar() {
             <Grid container justify="center">
               <ToggleAudioButton disabled={isReconnecting} />
               <ToggleVideoButton disabled={isReconnecting} />
-              <Hidden smDown>{!isSharingScreen && <ToggleScreenShareButton disabled={isReconnecting} />}</Hidden>
+              {!isMobile && !isSharingScreen && <ToggleScreenShareButton disabled={isReconnecting} />}
               <FlipCameraButton />
             </Grid>
           </Grid>

@@ -1,4 +1,4 @@
-import { DEFAULT_VIDEO_CONSTRAINTS } from '../../../constants';
+import { getDefaultVideoConstraints } from '../../../constants';
 import { useCallback, useState } from 'react';
 import Video, { LocalVideoTrack, LocalAudioTrack, CreateLocalTrackOptions } from 'twilio-video';
 import { useHasAudioInputDevices, useHasVideoInputDevices } from '../../../hooks/deviceHooks/deviceHooks';
@@ -26,7 +26,7 @@ export default function useLocalTracks() {
 
   const getLocalVideoTrack = useCallback((newOptions?: CreateLocalTrackOptions) => {
     const options: CreateLocalTrackOptions = {
-      ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+      ...(getDefaultVideoConstraints() as {}),
       name: `camera-${Date.now()}`,
       ...newOptions,
     };
@@ -51,7 +51,7 @@ export default function useLocalTracks() {
     setIsAcquiringLocalTracks(true);
     return Video.createLocalTracks({
       video: hasVideo && {
-        ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+        ...(getDefaultVideoConstraints() as {}),
         name: `camera-${Date.now()}`,
       },
       audio: hasAudio,
