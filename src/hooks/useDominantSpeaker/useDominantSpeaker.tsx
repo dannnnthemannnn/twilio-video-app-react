@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useVideoContext from '../useVideoContext/useVideoContext';
 import { RemoteParticipant } from 'twilio-video';
+import useDominantSpeakerWithNull from './useDominantSpeakerWithNull';
 
 export default function useDominantSpeaker() {
   const { room } = useVideoContext();
-  const [dominantSpeaker, setDominantSpeaker] = useState(room.dominantSpeaker);
+  const dominantSpeakerWithNull = useDominantSpeakerWithNull();
+  const [dominantSpeaker, setDominantSpeaker] = useState(dominantSpeakerWithNull);
 
   useEffect(() => {
     // Sometimes, the 'dominantSpeakerChanged' event can emit 'null', which means that
     // there is no dominant speaker. If we change the main participant when 'null' is
     // emitted, the effect can be jarring to the user. Here we ignore any 'null' values
     // and continue to display the previous dominant speaker as the main participant.
-    const handleDominantSpeakerChanged = (newDominantSpeaker: RemoteParticipant) => {
-      if (newDominantSpeaker !== null) {
-        setDominantSpeaker(newDominantSpeaker);
-      }
-    };
+    if (dominantSpeakerWithNull != null) {
+      setDominantSpeaker(dominantSpeakerWithNull);
+    }
 
     // Since 'null' values are ignored, we will need to listen for the 'participantDisconnected'
     // event, so we can set the dominantSpeaker to 'null' when they disconnect.
@@ -25,13 +25,11 @@ export default function useDominantSpeaker() {
       });
     };
 
-    room.on('dominantSpeakerChanged', handleDominantSpeakerChanged);
     room.on('participantDisconnected', handleParticipantDisconnected);
     return () => {
-      room.off('dominantSpeakerChanged', handleDominantSpeakerChanged);
       room.off('participantDisconnected', handleParticipantDisconnected);
     };
-  }, [room]);
+  }, [room, dominantSpeakerWithNull]);
 
   return dominantSpeaker;
 }

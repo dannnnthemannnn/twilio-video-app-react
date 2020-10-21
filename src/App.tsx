@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { styled, Theme } from '@material-ui/core/styles';
 
 import MenuBar from './components/MenuBar/MenuBar';
@@ -9,6 +9,9 @@ import Room from './components/Room/Room';
 
 import useHeight from './hooks/useHeight/useHeight';
 import useRoomState from './hooks/useRoomState/useRoomState';
+import useDominantSpeakerWithNull from './hooks/useDominantSpeaker/useDominantSpeakerWithNull';
+import { useLocation } from 'react-router-dom';
+import useVideoContext from './hooks/useVideoContext/useVideoContext';
 
 const Container = styled('div')({
   display: 'grid',
@@ -33,6 +36,39 @@ export default function App() {
   // We will dynamically set the height with 'window.innerHeight', which means that this
   // will look good on mobile browsers even after the location bar opens or closes.
   const height = useHeight();
+
+  const dominantSpeaker = useDominantSpeakerWithNull();
+  const location = useLocation();
+  const {
+    room: { localParticipant },
+  } = useVideoContext();
+
+  const localParticipantRef = useRef(localParticipant);
+
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get('token')!;
+
+  useEffect(() => {
+    localParticipantRef.current = localParticipant;
+  }, [localParticipant]);
+
+  useEffect(() => {
+    console.log('speaker changed');
+    console.log(dominantSpeaker?.sid);
+
+    fetch('https://us-central1-juntochat-dev.cloudfunctions.net/TwilioMeetingDominantSpeakerUpdate', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+          },
+          mode: 'no-cors',
+          body: JSON.stringify({ 
+            dominantSpeakerSid: dominantSpeaker?.sid, 
+            senderUid: localParticipantRef.current?.sid,
+            token
+           }),
+        });
+  }, [dominantSpeaker]);
 
   return (
     <Container style={{ height }}>

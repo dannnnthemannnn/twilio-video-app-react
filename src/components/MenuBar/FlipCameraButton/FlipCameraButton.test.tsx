@@ -1,5 +1,5 @@
 import React from 'react';
-import { DEFAULT_VIDEO_CONSTRAINTS } from '../../../constants';
+import { getDefaultVideoConstraints } from '../../../constants';
 import { fireEvent, render } from '@testing-library/react';
 import FlipCameraButton from './FlipCameraButton';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
@@ -85,7 +85,7 @@ describe('the FlipCameraButton', () => {
     const { container } = render(<FlipCameraButton />);
     fireEvent.click(container.querySelector('button')!);
     expect(mockVideoTrack.restart).toHaveBeenCalledWith({
-      ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+      ...(getDefaultVideoConstraints() as {}),
       facingMode: 'user',
     });
   });

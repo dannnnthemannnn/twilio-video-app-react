@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles, Typography, Grid, Button, Theme, Hidden } from '@material-ui/core';
 import LocalVideoPreview from './LocalVideoPreview/LocalVideoPreview';
 import SettingsMenu from './SettingsMenu/SettingsMenu';
@@ -7,6 +7,7 @@ import ToggleAudioButton from '../../Buttons/ToggleAudioButton/ToggleAudioButton
 import ToggleVideoButton from '../../Buttons/ToggleVideoButton/ToggleVideoButton';
 import { useAppState } from '../../../state';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import useLocalVideoToggle from '../../../hooks/useLocalVideoToggle/useLocalVideoToggle';
 
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
@@ -60,11 +61,20 @@ export default function DeviceSelectionScreen({ name, title, token }: DeviceSele
   const classes = useStyles();
   const { isFetching } = useAppState();
   const { connect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
-  const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
+  const [isVideoEnabled] = useLocalVideoToggle();
+  const [pendingVideoEnabled, setPendingVideoEnabled] = useState(false);
+  const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting || (pendingVideoEnabled && !isVideoEnabled);
 
   const handleJoin = () => {
     connect(token);
   };
+
+  useEffect(() => {
+    if (!isAcquiringLocalTracks) {
+      setPendingVideoEnabled(true);
+      setTimeout(() => setPendingVideoEnabled(false), 5000);
+    }
+  }, [isAcquiringLocalTracks])
 
   return (
     <>

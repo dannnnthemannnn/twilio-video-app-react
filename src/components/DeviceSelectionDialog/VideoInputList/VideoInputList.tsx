@@ -1,5 +1,5 @@
 import React from 'react';
-import { DEFAULT_VIDEO_CONSTRAINTS } from '../../../constants';
+import { getDefaultVideoConstraints } from '../../../constants';
 import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
 import { LocalVideoTrack } from 'twilio-video';
 import { makeStyles } from '@material-ui/core/styles';
@@ -30,7 +30,7 @@ export default function VideoInputList() {
 
   function replaceTrack(newDeviceId: string) {
     localVideoTrack.restart({
-      ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+      ...(getDefaultVideoConstraints() as {}),
       deviceId: { exact: newDeviceId },
     });
   }

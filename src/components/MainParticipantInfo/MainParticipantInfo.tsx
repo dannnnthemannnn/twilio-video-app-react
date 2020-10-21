@@ -13,6 +13,8 @@ import useTrack from '../../hooks/useTrack/useTrack';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import AudioLevelIndicator from '../AudioLevelIndicator/AudioLevelIndicator';
+import { useLocation } from 'react-router-dom';
+import HostMenu from '../ParticipantInfo/HostMenu/HostMenu';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -26,6 +28,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: '0.1em 0.3em 0.1em 0',
     fontSize: '1.2em',
     display: 'inline-flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     '& svg': {
       marginLeft: '0.3em',
     },
@@ -98,6 +102,10 @@ export default function MainParticipantInfo({ participant, children }: MainParti
 
   const isVideoSwitchedOff = useIsTrackSwitchedOff(videoTrack as LocalVideoTrack | RemoteVideoTrack);
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
+  
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const isHost = queryParams.get('isHost') ?? false;
 
   return (
     <div
@@ -115,6 +123,7 @@ export default function MainParticipantInfo({ participant, children }: MainParti
             {isLocal && ' (You)'}
             {screenSharePublication && ' - Screen'}
           </Typography>
+          {isHost && !isLocal && <HostMenu participant={participant}/>}
         </div>
       </div>
       {(!isVideoEnabled || isVideoSwitchedOff) && (
