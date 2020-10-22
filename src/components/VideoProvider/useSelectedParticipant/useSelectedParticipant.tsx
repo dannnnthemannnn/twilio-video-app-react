@@ -17,8 +17,11 @@ type SelectedParticipantProviderProps = {
 
 export function SelectedParticipantProvider({ room, children }: SelectedParticipantProviderProps) {
   const [selectedParticipant, _setSelectedParticipant] = useState<Participant | null>(null);
-  const setSelectedParticipant = (participant: Participant) =>
+  const setSelectedParticipant = (participant: Participant) => {
+    console.log('Updating selected participant');
+    console.log(participant);
     _setSelectedParticipant(prevParticipant => (prevParticipant === participant ? null : participant));
+  }
 
   useEffect(() => {
     const onDisconnect = () => _setSelectedParticipant(null);

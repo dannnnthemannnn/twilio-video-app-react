@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { styled, Theme } from '@material-ui/core/styles';
 
 import MenuBar from './components/MenuBar/MenuBar';
@@ -12,6 +12,7 @@ import useRoomState from './hooks/useRoomState/useRoomState';
 import useDominantSpeakerWithNull from './hooks/useDominantSpeaker/useDominantSpeakerWithNull';
 import { useLocation } from 'react-router-dom';
 import useVideoContext from './hooks/useVideoContext/useVideoContext';
+import DisconnectedScreen from './components/DisconnectedScreen/DisconnectedScreen';
 
 const Container = styled('div')({
   display: 'grid',
@@ -37,6 +38,8 @@ export default function App() {
   // will look good on mobile browsers even after the location bar opens or closes.
   const height = useHeight();
 
+  const [enteredRoom, setEnteredRoom] = useState<boolean>(false);
+
   const dominantSpeaker = useDominantSpeakerWithNull();
   const location = useLocation();
   const {
@@ -53,6 +56,12 @@ export default function App() {
   }, [localParticipant]);
 
   useEffect(() => {
+    if (roomState === 'connected' && !enteredRoom) {
+      setEnteredRoom(true);
+    }
+  }, [roomState]);
+
+  /*useEffect(() => {
     console.log('speaker changed');
     console.log(dominantSpeaker?.sid);
 
@@ -68,20 +77,26 @@ export default function App() {
             token
            }),
         });
-  }, [dominantSpeaker]);
+  }, [dominantSpeaker]);*/
+
+  var content;
+  if (roomState === 'disconnected' && !enteredRoom) {
+    content = <PreJoinScreens />;
+  } else if (roomState === 'disconnected' && enteredRoom) {
+    content = <DisconnectedScreen />;
+  } else {
+    content = 
+    <Main>
+      <ReconnectingNotification />
+      <MobileTopMenuBar />
+      <Room />
+      <MenuBar />
+    </Main>;
+  }
 
   return (
     <Container style={{ height }}>
-      {roomState === 'disconnected' ? (
-        <PreJoinScreens />
-      ) : (
-        <Main>
-          <ReconnectingNotification />
-          <MobileTopMenuBar />
-          <Room />
-          <MenuBar />
-        </Main>
-      )}
+      {content}
     </Container>
   );
 }

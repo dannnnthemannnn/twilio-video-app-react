@@ -16,15 +16,25 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 interface HostMenuProps {
     participant: Participant;
 }
+
+const useStyles = makeStyles((theme: Theme) => ({
+    mainContent: {
+      color: 'black',
+    },
+  }));
+  
   
 export default function HostMenu({ participant }: HostMenuProps) {
 
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [lockRoom, setLockRoom] = useState(false);
   const [kickDialogOpen, setKickDialogOpen] = useState(false);
   const [isKicking, setIsKicking] = useState(false);
   const [showErrorKicking, setShowErrorKicking] = useState(false);
@@ -38,8 +48,7 @@ export default function HostMenu({ participant }: HostMenuProps) {
 
   const kickParticipant = useCallback(() => {
     setIsKicking(true);
-    console.log('kicking participant: ' + participant.identity);
-
+    
     const kickUrl = isDev 
         ? 'https://us-central1-juntochat-dev.cloudfunctions.net/KickParticipant'
         : 'https://us-central1-juntochat.cloudfunctions.net/KickParticipant';
@@ -53,6 +62,7 @@ export default function HostMenu({ participant }: HostMenuProps) {
             juntoId: juntoId,
             topicId: topicId,
             kickParticipant: participant.identity,
+            lockRoom: lockRoom,
            }),
         })
         .then((value) => console.log(value))
@@ -64,7 +74,10 @@ export default function HostMenu({ participant }: HostMenuProps) {
             setIsKicking(false);
             setKickDialogOpen(false);
         });
-  }, []);
+  }, [participant, lockRoom]);
+
+
+  const classes = useStyles();
 
   return (
     <div>
@@ -101,7 +114,18 @@ export default function HostMenu({ participant }: HostMenuProps) {
         <Dialog open={kickDialogOpen} onClose={() => setKickDialogOpen(false)} fullWidth={true} maxWidth="xs">
             <DialogTitle>Remove Participant</DialogTitle>
             <DialogContent>
-                <DialogContentText>Remove {participant.identity} from the meeting? </DialogContentText>
+                <DialogContentText className={classes.mainContent}>Ban {participant.identity} from the meeting? They will not be able to rejoin. </DialogContentText>
+                <FormControlLabel
+                    control={
+                    <Checkbox
+                        checked={lockRoom}
+                        onChange={(e, checked) => setLockRoom(checked)}
+                        name="lockRoom"
+                        color="primary"
+                    />
+                    }
+                    label="Lock room to prevent any one new from joining?"
+                />
             </DialogContent>
             <DialogActions>
                 {isKicking && <CircularProgress />}

@@ -12,9 +12,12 @@ export default function useMainParticipant() {
   const {
     room: { localParticipant },
   } = useVideoContext();
+
   const remoteScreenShareParticipant = screenShareParticipant !== localParticipant ? screenShareParticipant : null;
+
+  const filteredSelectedParticipant = participants.some((p) => p.identity == selectedParticipant?.identity) ? selectedParticipant : null;
 
   // The participant that is returned is displayed in the main video area. Changing the order of the following
   // variables will change the how the main speaker is determined.
-  return selectedParticipant || remoteScreenShareParticipant || dominantSpeaker || participants[0] || localParticipant;
+  return filteredSelectedParticipant || remoteScreenShareParticipant || dominantSpeaker || participants[0] || localParticipant;
 }
