@@ -55,10 +55,7 @@ export default function PreJoinScreens() {
   }, [getAudioAndVideoTracks, step]);
 
   const SubContent = (
-    <>
-      {Video.testPreflight && <PreflightTest />}
       <MediaErrorSnackbar error={mediaError} />
-    </>
   );
 
   return (

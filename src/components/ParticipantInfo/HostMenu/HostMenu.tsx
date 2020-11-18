@@ -114,7 +114,7 @@ export default function HostMenu({ participant }: HostMenuProps) {
         <Dialog open={kickDialogOpen} onClose={() => setKickDialogOpen(false)} fullWidth={true} maxWidth="xs">
             <DialogTitle>Remove Participant</DialogTitle>
             <DialogContent>
-                <DialogContentText className={classes.mainContent}>Ban {participant.identity} from the meeting? They will not be able to rejoin. </DialogContentText>
+                <DialogContentText className={classes.mainContent}>Remove {participant.identity} from the meeting? They will not be able to rejoin. </DialogContentText>
                 <FormControlLabel
                     control={
                     <Checkbox

@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'relative',
     display: 'flex',
     alignItems: 'center',
+    height: '100%',
   },
   identity: {
     background: 'rgba(0, 0, 0, 0.5)',

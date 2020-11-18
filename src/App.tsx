@@ -48,9 +48,6 @@ export default function App() {
 
   const localParticipantRef = useRef(localParticipant);
 
-  const queryParams = new URLSearchParams(location.search);
-  const token = queryParams.get('token')!;
-
   useEffect(() => {
     localParticipantRef.current = localParticipant;
   }, [localParticipant]);
@@ -95,7 +92,7 @@ export default function App() {
   }
 
   return (
-    <Container style={{ height }}>
+    <Container style={{ height: '100%' }}>
       {content}
     </Container>
   );
