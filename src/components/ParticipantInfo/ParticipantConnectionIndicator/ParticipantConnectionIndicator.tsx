@@ -15,7 +15,7 @@ const useStyles = makeStyles({
     marginRight: '3px',
   },
   isReconnecting: {
-    background: '#ffb100',
+    //background: '#ffb100',
   },
 });
 

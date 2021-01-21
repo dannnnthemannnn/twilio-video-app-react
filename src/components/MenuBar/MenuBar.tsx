@@ -14,6 +14,7 @@ import ToggleVideoButton from '../Buttons/ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from '../Buttons/ToogleScreenShareButton/ToggleScreenShareButton';
 import { useAppState } from '../../state';
 import { isMobile } from 'react-device-detect';
+import { useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,6 +73,11 @@ export default function MenuBar() {
   const isReconnecting = roomState === 'reconnecting';
   const { room } = useVideoContext();
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const screenShareParam = queryParams.get('screenshare');
+  const enableScreenShare = screenShareParam == 'true' || screenShareParam == null;
+
   return (
     <>
       {isSharingScreen && (
@@ -91,7 +97,7 @@ export default function MenuBar() {
             <Grid container justify="center">
               <ToggleAudioButton disabled={isReconnecting} />
               <ToggleVideoButton disabled={isReconnecting} />
-              {!isMobile && !isSharingScreen && <ToggleScreenShareButton disabled={isReconnecting} />}
+              {enableScreenShare && !isMobile && !isSharingScreen && <ToggleScreenShareButton disabled={isReconnecting} />}
               <FlipCameraButton />
             </Grid>
           </Grid>

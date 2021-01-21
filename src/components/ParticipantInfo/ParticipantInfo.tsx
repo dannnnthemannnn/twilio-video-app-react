@@ -200,7 +200,7 @@ export default function ParticipantInfo({
         <div>{isSelected && <PinIcon />}</div>
       </div>
       <div className={classes.innerContainer}>
-        {(!isVideoEnabled || isVideoSwitchedOff) && (
+        {(!isVideoEnabled) && (
           <div className={classes.avatarContainer}>
             <AvatarIcon />
           </div>
