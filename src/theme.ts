@@ -109,6 +109,15 @@ export default createMuiTheme({
       main: '#027AC5',
     },
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 2000,
+      md: 2010,
+      lg: 2020,
+      xl: 2030,
+    },
+  },
   brand: '#E22525',
   footerHeight: 72,
   mobileFooterHeight: 56,
